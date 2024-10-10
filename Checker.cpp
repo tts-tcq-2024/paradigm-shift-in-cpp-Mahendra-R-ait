@@ -38,11 +38,10 @@ else{
 return true;
 }
 
-Float chrage_warning_tolerance = (TOLERANCE_PERCENTAGE * CR_MAX)
+float chrage_warning_tolerance = (TOLERANCE_PERCENTAGE * CR_MAX);
 bool ischargerateOK(float chargeRate) {
     if (chargeRate > (0.8 - chrage_warning_tolerance)) {
         cout << "Waring: Charge Rate is reaching limit!\n";
-        return false;
     }
     return true;
 }
