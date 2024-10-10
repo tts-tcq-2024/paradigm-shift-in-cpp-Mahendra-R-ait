@@ -9,10 +9,10 @@ using namespace std;
 float Temp_warning_tolerange = (TOLERANCE_PERCENTAGE * TEMP_MAX);
 bool isTempOK(float temperature){
 if (temperature < (0 + Temp_warning_tolerange)){
-  cout<<"Warning: Approaching Low Temperature\n;
+  cout<<"Warning: Approaching Low Temperature\n";
 }
 else if ( temperature > (45 - Temp_warning_tolerange){
-  cout<<""Warning: Approaching High Temperature\n;
+  cout<<"Warning: Approaching High Temperature\n";
 }
 else{
     //do nothing
