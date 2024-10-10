@@ -11,7 +11,7 @@ bool isTempOK(float temperature){
 if (temperature < (0 + Temp_warning_tolerange)){
   cout<<"Warning: Approaching Low Temperature\n";
 }
-else if ( temperature > (45 - Temp_warning_tolerange){
+else if ( temperature > (45 - Temp_warning_tolerange)){
   cout<<"Warning: Approaching High Temperature\n";
 }
 else{
