@@ -1,14 +1,32 @@
+#include "battery.h"
+#include "battery_check.h"
 #include <iostream>
-
-#define CR_MAX 0.8
-#define TOLERANCE_PERCENTAGE 0.05 // As per requirement Tolerance Thershold is 5% it is equal to 0.05
-
 using namespace std;
 
-float chrage_warning_tolerance = (TOLERANCE_PERCENTAGE * CR_MAX);
-bool ischargerateOK(float chargeRate) {
-    if (chargeRate > (0.8 - chrage_warning_tolerance)) {
-        cout << "Waring: Charge Rate is reaching limit!\n";
+bool batteryCheck(float temperature, float soc, float chargeRate) {
+    RangeResult temperatureResult = isParametersinRange(temperature, 0, 45, "Temperature ");
+    RangeResult socResult = isParametersinRange(soc, 20, 80, "State of charge ");
+    RangeResult chargeRateResult = isChargeRateOk(chargeRate);
+    
+    printTemperatureWarning(temperatureResult);
+    printSocWarning(socResult);
+    printChargeRateWarning(chargeRateResult);
+
+    return temperatureResult.inRange && socResult.inRange && chargeRateResult.inRange;
+}
+void printTemperatureWarning(const RangeResult& temperatureResult){
+    if (!temperatureResult.message.empty()) {
+        cout << temperatureResult.message;
     }
-    return true;
+}
+void printSocWarning(const RangeResult& socResult){
+    if (!socResult.message.empty()) {
+        cout << socResult.message;
+    }
+}
+void printChargeRateWarning(const RangeResult& chargeRateResult)
+{
+    if (!chargeRateResult.message.empty()) {
+        cout << chargeRateResult.message;
+    }
 }
