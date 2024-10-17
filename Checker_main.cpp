@@ -1,14 +1,55 @@
-#include <assert.h>
+#include "battery.h"
 #include <iostream>
+using namespace std;
 
-bool batteryIsOk(float temperature, float soc, float chargeRate) {
-return isTempOK(temperature) && issocOK(soc) && ischargerateOK(chargeRate);
+bool isMax(float value, float maxValue) { return value > maxValue; }
+bool isMin(float value, float minValue) { return value < minValue; }
+bool findLowThreshold(float value, float min, float tolerance){ return value > min&& value <= min + tolerance; }
+bool findHighThreshold(float value, float max, float tolerance) { return value >= max - tolerance && value < max; }
+
+void checkWarning(float value, float min, float max, const string& argument, string& message) {
+    float tolerance = 0.05 * max;
+    bool low_threshold = findLowThreshold(value, min, tolerance);
+    bool max_threshold = findHighThreshold(value, max, tolerance);
+    if (low_threshold) {
+        message += "Warning: " + argument + " approaching discharge imit.\n";
+    }
+    else if (max_threshold) {
+        message += "Warning: " + argument + " approaching peak-charge limit.\n";
+    }
+}
+void checkWarningForCharge(float value,float max, const string& argument, string& message){
+    float tolerance = 0.05 * max;
+    bool max_threshold = findHighThreshold(value, max, tolerance);
+    if(max_threshold) {
+            message += "Warning: " + argument + " approaching peak-charge limit.\n";
+    }
 }
 
-int main() {
-  assert(batteryIsOk(25, 70, 0.7) == true);
-  assert(batteryIsOk(50, 85, 0) == false);
-  assert(batteryIsOk(25, 78, 0.7) == true);
-  assert(batteryIsOk(22, 70, 0.7) == true);
-  assert(batteryIsOk(25, 70, 0.76) == true);
+RangeResult isParametersinRange(float value, float min, float max, const string& argument) {
+    RangeResult result;
+    result.inRange = true;
+    result.message = "";
+    checkWarning(value, min, max, argument, result.message);
+    if (isMin(value, min)) {
+        result.message += argument + " too low.\n";
+        result.inRange = false;
+    }
+    else if (isMax(value, max)) {
+        result.message += argument + " too high.\n";
+        result.inRange = false;
+    }
+    return result;
+}
+
+RangeResult isChargeRateOk(float chargeRate) {
+    RangeResult result;
+    result.inRange = true;
+    result.message = "";
+    checkWarningForCharge(chargeRate, 0.8, "Charge Rate ", result.message);
+    if (isMax(chargeRate, 0.8)) {
+        result.message += "Charge Rate out of range.\n";
+        result.inRange = false;
+    }
+    return result;
 }
